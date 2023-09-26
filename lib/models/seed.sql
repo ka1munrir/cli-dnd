@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS charItems (
     cost FLOAT,
     weight FLOAT,
     damage TEXT,
-    damage_type TEXT CHECK (damage_type IN ("acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic", "piercing", "poison", "psychic", "radiant", "slashing", "thunder")),
+    damage_type TEXT CHECK (damage_type IN ("acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic", "piercing", "poison", "psychic", "radiant", "slashing", "thunder", NULL)),
     distance INTEGER,
     FOREIGN KEY (character_rel) REFERENCES characters(id)
 );
