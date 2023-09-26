@@ -123,10 +123,13 @@ class Characters:
         CURSOR.execute(sql)
         CONN.commit()
 
-    
-
-    
-
-
-    
-        
+    @classmethod
+    def get_by_user(cls, userID):
+        sql = f'''
+        SELECT *
+        FROM characters
+        WHERE player_rel = "{userID}"
+        '''
+        characters = CURSOR.execute(sql).fetchall()
+        char_list = [character[2] for character in characters]
+        return (char_list)
