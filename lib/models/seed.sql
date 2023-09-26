@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS spells (
     components TEXT,
     materials TEXT,
     casting_time TEXT,
-    distance TEXT,
+    dist INTEGER,
     duration TEXT,
     description TEXT
 );
