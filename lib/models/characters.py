@@ -15,6 +15,7 @@ class Characters:
         self.hit_points = hit_points
         self.temp_hit_points = temp_hit_points
         self.hit_dice = hit_dice
+        self.save()
 
     def _get_player_rel(self):
         return self._player_rel
