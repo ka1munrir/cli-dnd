@@ -1,5 +1,5 @@
 from models.players import Players
-from models.characters import Character
+from models.characters import Characters
+from models.spells import Spells
 
-player1 = Players("player1", "player1")
-beep = Players("beep", "beep")
+Spells.fill()

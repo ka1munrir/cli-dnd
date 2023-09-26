@@ -1,12 +1,15 @@
 from .init import CONN, CURSOR
+import requests, json
 
 class Spells:
 
-    def __init__(self, name, level, school, ritual, components, materials, casting_time, dist, duration, desc) -> None:
+    def __init__(self, name, level, school, classes, ritual, concentration, components, materials, casting_time, dist, duration, desc) -> None:
         self.name = name
         self.level = level
         self.school = school
+        self.classes = classes
         self.ritual = ritual
+        self.concentration = concentration
         self.components = components
         self.materials = materials
         self.castings_time = casting_time
@@ -18,6 +21,7 @@ class Spells:
         return f""" Name: {self.name}
                     Level: {self.level}
                     School: {self.school}
+                    Classes: {self.classes}
                     Ritual: {self.ritual}
                     Components: {self.components}
                     Materials: {self.materials}
@@ -51,6 +55,14 @@ class Spells:
         else:
             raise Exception("school must be a string")
     school = property(get_school, set_school)
+    def get_classes(self):
+        return self._classes
+    def set_classes(self, classes):
+        if isinstance(classes, str):
+            self._classes = classes
+        else:
+            raise Exception("classes must be a string")
+    classes = property(get_classes, set_classes)
     def get_ritual(self):
         return self._ritual
     def set_ritual(self, ritual):
@@ -59,6 +71,14 @@ class Spells:
         else:
             self._ritual = 0
     ritual = property(get_ritual, set_ritual)
+    def get_concentration(self):
+        return self._concentration
+    def set_concentration(self, concentration):
+        if concentration: 
+            self._concentration = 1
+        else:
+            self._concentration = 0
+    concentration = property(get_concentration, set_concentration)
     def get_components(self):
         return self._components
     def set_components(self, components):
@@ -86,7 +106,7 @@ class Spells:
     def get_dist(self):
         return self._dist
     def set_dist(self, dist):
-        if isinstance(dist, int):
+        if isinstance(dist, str):
             self._dist = dist
         else:
             raise Exception("Dist must be an integer in terms of ft")
@@ -107,4 +127,28 @@ class Spells:
         else:
             raise Exception("Duration must be a string")
     desc = property(get_desc, set_desc)
-    
+
+    @classmethod
+    def fill(self):
+        baseLink = 'https://www.dnd5eapi.co'
+
+        res = requests.get(f'{baseLink}/api/spells')
+        r = json.loads(res.text)
+        for result in r["results"]:
+            a = requests.get(f'{baseLink}{result["url"]}')
+            b = json.loads(a.text)
+            if not b.get("material"):
+                b["material"] = ""
+            csc = []
+            for c in b["classes"]:
+                csc.append(c["index"])
+            for sc in b["subclasses"]:
+                csc.append(sc["index"])
+            sql = f'''
+            INSERT INTO spells (name, level, classes, school, ritual, concentration, components, materials, casting_time, dist, duration, description)
+            VALUES ("{b["name"]}", {b["level"]}, "{", ".join(csc)}", "{b["school"]["name"]}", {b["ritual"]}, {b["concentration"]}, "{" ".join(b["components"])}", "{b["material"]}", "{b["casting_time"]}", "{b["range"]}", "{b["duration"]}", "{" ".join(b["desc"]).replace('"', "'")}")
+            '''
+            CURSOR.execute(sql)
+            CONN.commit()
+
+            

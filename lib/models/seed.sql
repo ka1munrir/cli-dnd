@@ -88,13 +88,14 @@ CREATE TABLE IF NOT EXISTS spells (
     id INTEGER PRIMARY KEY,
     name TEXT,
     level INTEGER,
+    classes TEXT,
     school TEXT,
-    ritual BOOL,
-    concentration BOOL,
+    ritual INTEGER,
+    concentration INTEGER,
     components TEXT,
     materials TEXT,
     casting_time TEXT,
-    dist INTEGER,
+    dist TEXT,
     duration TEXT,
     description TEXT
 );
