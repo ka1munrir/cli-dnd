@@ -14,12 +14,11 @@ class Players:
     def _get_username(self):
         return self._username
     def _set_username(self, username):
-        if not Players.get_player_by_username(username):
+        if not Players.get_by_username(username):
             self._username = username
         else:
             raise Exception("Username is already taken")
     username = property(_get_username, _set_username)
-
     def _get_password(self):
         return self._password
     def _set_password(self, password):
@@ -35,7 +34,7 @@ class Players:
         CONN.commit()
     
     @classmethod
-    def get_player_by_username(cls, username):
+    def get_by_username(cls, username):
         sql = f'''
         SELECT *
         FROM players

@@ -20,7 +20,10 @@ class Characters:
     def _get_player_rel(self):
         return self._player_rel
     def _set_player_rel(self, player_rel):
-        self._player_rel = player_rel
+        if isinstance(player_rel, int):
+            self._player_rel = player_rel
+        else:
+            raise Exception("Player_rel must be an integer")
     player_rel = property(_get_player_rel, _set_player_rel)
     def _get_name(self):
         return self._name
