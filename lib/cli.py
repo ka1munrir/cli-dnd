@@ -3,6 +3,7 @@ from asciiArt import character_creator
 import inquirer, os
 
 def main():
+    os.system("clear")
     print(character_creator)
     questions = [
         inquirer.List('option', 

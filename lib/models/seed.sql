@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS characters (
     race TEXT CHECK(race IN ("dragonborn", "dwarf", "elf", "gnome", "half-elf", "half-orc", "halfling", "human", "tiefling")),
     class TEXT CHECK(class IN ("barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard")),
     level INTEGER,
-    background TEXT,
     proficiency INTEGER,
     passive_perception INTEGER,
     armor_class INTEGER,

@@ -3,12 +3,13 @@ from .init import CONN, CURSOR
 class Characters:
     RACES = ["dragonborn", "dwarf", "elf", "gnome", "half-elf", "half-orc", "halfling", "human", "tiefling"]
     CLASSES = ["barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard"]
-    def __init__(self, player_rel, name, race, job, level, proficiency, passive_perception, armor_class, speed, hit_points, temp_hit_points, hit_dice):
+    def __init__(self, player_rel, name, race, job, level, background, proficiency, passive_perception, armor_class, speed, hit_points, temp_hit_points, hit_dice):
         self.player_rel = player_rel
         self.name = name
         self.race = race
         self.job = job
         self.level = level
+        self.background = background
         self.proficiency = proficiency
         self.passive_perception = passive_perception
         self.armor_class = armor_class
@@ -58,6 +59,14 @@ class Characters:
         else:
             raise Exception("Level must be an integer")
     level = property(_get_level, _set_level)
+    def _get_background(self):
+        return self._background
+    def _set_background(self, background):
+        if isinstance(background, str):
+            self._background = background
+        else:
+            raise Exception("Background must be a string")
+    background = property(_get_background, _set_background)
     def _get_proficiency(self):
         return self._proficiency
     def _set_proficiency(self, proficiency):
@@ -117,8 +126,8 @@ class Characters:
 
     def save(self):
         sql = f'''
-        INSERT INTO characters (player_rel, name, race, job, level, proficiency, passive_perception, armor_class, speed, hit_points, temp_hit_points, hit_dice)
-        VALUES ("{self.player_rel}", "{self.name}", "{self.race}", "{self.job}", "{self.level}", "{self.proficiency}", "{self.passive_perception}", "{self.armor_class}", "{self.speed}", "{self.hit_points}", "{self.temp_hit_points}", "{self.hit_dice}")
+        INSERT INTO characters (player_rel, name, race, class, level, background, proficiency, passive_perception, armor_class, speed, hit_points, temporary_hit_points, hit_dice)
+        VALUES ("{self.player_rel}", "{self.name}", "{self.race}", "{self.job}", "{self.level}", "{self.background}", "{self.proficiency}", "{self.passive_perception}", "{self.armor_class}", "{self.speed}", "{self.hit_points}", "{self.temp_hit_points}", "{self.hit_dice}")
         '''
         CURSOR.execute(sql)
         CONN.commit()
@@ -133,3 +142,13 @@ class Characters:
         characters = CURSOR.execute(sql).fetchall()
         char_list = [character[2] for character in characters]
         return (char_list)
+    
+    @classmethod
+    def get_by_id(cls, charID):
+        sql = f'''
+        SELECT *
+        FROM characters
+        WHERE id = "{charID}"
+        '''
+        character = CURSOR.execute(sql).fetchone()
+        return (character)
