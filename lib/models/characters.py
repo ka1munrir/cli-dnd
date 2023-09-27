@@ -151,3 +151,12 @@ class Characters:
         '''
         character = CURSOR.execute(sql).fetchone()
         return (character)
+    
+    @classmethod
+    def delete(cls, charID):
+        sql = f'''
+                DELETE FROM characters
+                WHERE id = {charID}
+               '''
+        CURSOR.execute(sql)
+        CONN.commit()

@@ -1,4 +1,4 @@
-import inquirer, os
+import inquirer, os, time
 from models.players import Players
 from models.characters import Characters
 from asciiArt import *
@@ -7,7 +7,7 @@ def clear():
     os.system("clear")
 
 def main():
-    os.system("clear")
+    clear()
     print(character_creator)
     questions = [
         inquirer.List('option', 
@@ -17,16 +17,14 @@ def main():
     ]
     answer = inquirer.prompt(questions)
     if answer["option"] == "Exit":
-        os.system('clear')
+        clear()
         exit_program()
     elif answer["option"] == "Sign up":
-        os.system('clear')
+        clear()
         sign_up()
     elif answer["option"] == "Log in":
-        os.system("clear")
+        clear()
         log_in()
-    else:
-        print(answer)
 
 def sign_up():
     questions = [
@@ -78,7 +76,7 @@ def home(player):
     if answer["option"] == "Create New Character":
         character_creation(player)
     elif answer["option"] == "Delete Character":
-        pass
+        character_deletion(player, character_list)
     elif answer["option"] == "Log Out":
         main()
     else:
@@ -111,6 +109,10 @@ def character_creation(player):
     # print(answer["passive_perception"])
     Characters(player[0], answer["name"], answer["race"], answer["class"], 1, answer["background"], 2, int(answer["passive_perception"]), int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
 
+    print(f'Creating {answer["name"]}...')
+    time.sleep(2)
+    home(player)
+
 def character_deletion(player, character_list):
     questions = [
         inquirer.List('option',
@@ -119,8 +121,15 @@ def character_deletion(player, character_list):
                       ),
     ]
     answer = inquirer.prompt(questions)
+    char_to_del = 0
+    for character in character_list:
+        if character[2] == answer["option"]:
+            char_to_del = character[0]
+    Characters.delete(char_to_del)
+    print(f"\n\n{answer['option']} has been deleted")
+    time.sleep(2)
+    home(player)
 
 def exit_program():
     print("Goodbye!")
-    exit()
 

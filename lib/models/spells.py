@@ -1,4 +1,4 @@
-from .init import CONN, CURSOR
+from init import CONN, CURSOR
 import requests, json
 
 class Spells:

@@ -1,3 +1,3 @@
-from .spells import Spells
+from spells import Spells
 
 Spells.fill()
