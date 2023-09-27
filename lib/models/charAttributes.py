@@ -11,6 +11,7 @@ class CharAttributes:
         self.intelligence = intelligence
         self.wisdom = wisdom
         self.charisma = charisma
+        self.save()
     
     def __str__(self) -> str:
         return f'''
@@ -58,3 +59,11 @@ class CharAttributes:
     def _set_charisma(self, charisma):
         self._charisma = charisma
     charisma = property(_get_charisma, _set_charisma)
+
+    def save(self):
+        sql = f'''
+        INSERT INTO charAttributes (character_rel, strength, dexterity, constitution, intelligence, wisdom, charisma)
+        VALUES ({self.character_rel}, {self.strength}, {self.dexterity}, {self.constitution}, {self.intelligence}, {self.wisdom}, {self.charisma})
+        '''
+        CURSOR.execute(sql)
+        CONN.commit()
