@@ -140,8 +140,7 @@ class Characters:
         WHERE player_rel = "{userID}"
         '''
         characters = CURSOR.execute(sql).fetchall()
-        char_list = [character[2] for character in characters]
-        return (char_list)
+        return (characters)
     
     @classmethod
     def get_by_id(cls, charID):
