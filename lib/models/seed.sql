@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS charSpells;
-DROP TABLE IF EXISTS charItems;
-DROP TABLE IF EXISTS charProficiencies;
-DROP TABLE IF EXISTS charSkills;
-DROP TABLE IF EXISTS charSkillsConnect;
-DROP TABLE IF EXISTS charAttributes;
-DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS players;
+DROP TABLE IF EXISTS characters;
+DROP TABLE IF EXISTS charAttributes;
+DROP TABLE IF EXISTS charSkills;
+DROP TABLE IF EXISTS proficiencies;
+DROP TABLE IF EXISTS charProficiencies;
+DROP TABLE IF EXISTS charItems;
 DROP TABLE IF EXISTS spells;
+DROP TABLE IF EXISTS charSpells;
 
 -- Table: players
 CREATE TABLE IF NOT EXISTS players (
@@ -58,13 +58,21 @@ CREATE TABLE IF NOT EXISTS charSkills (
     FOREIGN KEY (character_rel) REFERENCES characters(id)
 );
 
+--Table: proficiencies
+CREATE TABLE IF NOT EXISTS proficiencies(
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    type TEXT,
+    people TEXT
+);
+
 -- Table: charProficiencies
 CREATE TABLE IF NOT EXISTS charProficiencies (
     id INTEGER PRIMARY KEY,
     character_rel INTEGER,
-    name TEXT,
-    description TEXT,
-    FOREIGN KEY (character_rel) REFERENCES characters(id)
+    proficiencies_rel INTEGER,
+    FOREIGN KEY (character_rel) REFERENCES characters(id),
+    FOREIGN KEY (proficiencies_rel) REFERENCES proficiencies(id)
 );
 
 -- Table: charItems
