@@ -1,6 +1,7 @@
-import inquirer, os, time
+import inquirer, os, time, random, math
 from models.players import Players
 from models.characters import Characters
+from models.charAttributes import CharAttributes
 from asciiArt import *
 
 def clear():
@@ -99,7 +100,7 @@ def display_character(player, character):
     ]
     answer = inquirer.prompt(questions)
     if answer["option"] == "Attributes":
-        pass
+        attribute_display(player, character)
     elif answer["option"] == "Skills":
         pass
     elif answer["option"] == "Spells":
@@ -113,36 +114,93 @@ def display_character(player, character):
     elif answer["option"] == "Back":
         home(player)
 
+def attribute_display(player, character):
+    clear()
+    attr = CharAttributes.get_by_char(character[0])
+    print(f"{character[2]}'s Attributes")
+    print(f"STR: {attr[2]}   {math.floor((attr[2] - 10)/2)}")
+    print(f"DEX: {attr[3]}   {math.floor((attr[3] - 10)/2)}")
+    print(f"CON: {attr[4]}   {math.floor((attr[4] - 10)/2)}")
+    print(f"INT: {attr[5]}   {math.floor((attr[5] - 10)/2)}")
+    print(f"WIS: {attr[6]}   {math.floor((attr[6] - 10)/2)}")
+    print(f"CHA: {attr[7]}   {math.floor((attr[7] - 10)/2)}")
+    questions = [
+        inquirer.List('option',
+                      choices = ["Back"],
+                      ),
+    ]
+    answer = inquirer.prompt(questions)
+    if answer["option"] == "Back":
+        home(player)
+
 
 def character_creation(player):
     clear()
-    questions = [
-        inquirer.Text('name', message = "Name"),
-        inquirer.List('race',
-                      message = "Race",
-                      choices = ["dragonborn", "dwarf", "elf", "gnome", "half-elf", "half-orc", "halfling", "human", "tiefling"],
-                      ),
-        inquirer.List('class',
-                      message = "Class",
-                      choices = ["barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard"],
-                      ),
-                    #   level is just 1
-        inquirer.Text('background', message = "Background"),
-                    #   proficiency is 2 + floor(level - 1/4)
-        inquirer.Text('passive_perception', message = "Passive Perception"),
-        inquirer.Text('armor_class', message = "Armor Class"),
-        inquirer.Text('speed', message = "Speed"),
-        inquirer.Text('hp', message = "Hit Points"),
-                    #   temp hp is 0
-        inquirer.Text('hit_dice', message = "Hit Dice Value"),
-    ]
-    answer = inquirer.prompt(questions)
-    # print(answer["passive_perception"])
-    Characters(player[0], answer["name"], answer["race"], answer["class"], 1, answer["background"], 2, int(answer["passive_perception"]), int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
+    name = input("Name: ")
+    player_characters = [character[2] for character in Characters.get_by_user(player[0])]
+    if name in player_characters:
+        print (f"You already have a character called {name}. Please rename your new character")
+        time.sleep(2)
+        character_creation(player)
+    else:
 
-    print(f'Creating {answer["name"]}...')
-    time.sleep(2)
-    home(player)
+        questions = [
+            inquirer.List('race',
+                        message = "Race",
+                        choices = ["dragonborn", "dwarf", "elf", "gnome", "half-elf", "half-orc", "halfling", "human", "tiefling"],
+                        ),
+            inquirer.List('class',
+                        message = "Class",
+                        choices = ["barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard"],
+                        ),
+                        #   level is just 1
+            inquirer.Text('background', message = "Background"),
+                        #   proficiency is 2 + floor(level - 1/4),
+            inquirer.Text('armor_class', message = "Armor Class"),
+            inquirer.Text('speed', message = "Speed"),
+            inquirer.Text('hp', message = "Hit Points"),
+                        #   temp hp is 0
+            inquirer.Text('hit_dice', message = "Hit Dice Value"),
+        ]
+        answer = inquirer.prompt(questions)
+        attributes = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+        priority = [1, 2, 3, 4, 5, 6]
+        priority_list = []
+        for attribute in attributes:
+            questions2 = [
+                inquirer.List(
+                    f'{attribute}',
+                    message = f"Please rank the priority of {attribute} from 1-6 (high-low):",
+                    choices = priority
+                )
+            ]
+            att_priority = inquirer.prompt(questions2)
+            priority_list.append(att_priority)
+            priority.remove(att_priority[f'{attribute}'])
+
+        priority_list = [list(dic.values())[0] for dic in priority_list]
+        # print(type(priority_list[0]['Strength']))
+        attribute_rolls = []
+        for attribute in attributes:
+            d64x = [random.randint(1,6) for i in range(4)]
+            d64x.sort()
+            d64x.pop(0)
+            attribute_rolls.append(sum(d64x))
+        attribute_rolls.sort(reverse = True)
+        attribute_vals = priority_list.copy()
+        
+        for i in range(5):
+            for j in range(5):
+                if priority_list[j] == i + 1:
+                    attribute_vals[j] = attribute_rolls[0]
+                    attribute_rolls.pop(0)
+        print(attribute_vals)
+        Characters(player[0], name , answer["race"], answer["class"], 1, answer["background"], 2, int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
+        new_char = Characters.get_by_user_and_name(player[0], name)
+        CharAttributes(new_char[0], attribute_vals[0], attribute_vals[1], attribute_vals[2], attribute_vals[3], attribute_vals[4], attribute_vals[5])
+        print(f'Creating {name}...')
+        time.sleep(2)
+        home(player)
 
 def character_deletion(player, character_list):
     questions = [

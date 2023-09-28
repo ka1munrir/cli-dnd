@@ -67,3 +67,13 @@ class CharAttributes:
         '''
         CURSOR.execute(sql)
         CONN.commit()
+
+    @classmethod
+    def get_by_char(cls, charID):
+        sql = f'''
+        SELECT *
+        FROM charAttributes
+        WHERE character_rel = {charID}
+        '''
+        character = CURSOR.execute(sql).fetchone()
+        return (character)
