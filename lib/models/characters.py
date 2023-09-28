@@ -160,3 +160,17 @@ class Characters:
                '''
         CURSOR.execute(sql)
         CONN.commit()
+
+    @classmethod
+    def level_up(cls, charID):
+        character = cls.get_by_id(charID)
+        if character[5] < 20:
+            sql = f'''
+                    UPDATE characters
+                    SET level = {character[5] + 1}
+                    WHERE id = {charID}
+                '''
+            CURSOR.execute(sql)
+            CONN.commit()
+        else:
+            print(f"{character[2]} is max level")

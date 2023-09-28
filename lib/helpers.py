@@ -80,7 +80,38 @@ def home(player):
     elif answer["option"] == "Log Out":
         main()
     else:
+        char_to_disp = None
+        for character in character_list:
+            if character[2] == answer["option"]:
+                char_to_disp = character
+        display_character(player, char_to_disp)
+
+def display_character(player, character):
+    clear()
+    print(f"Name: {character[2]}")
+    print(f"Race: {character[3]}")
+    print(f"Background: {character[6]}")
+    print(f"Level {character[5]} {character[4].capitalize()}")
+    questions = [
+        inquirer.List('option',
+                      choices = ["Attributes", "Skills", "Spells", "Items", "Level Up", "Back"],
+                      ),
+    ]
+    answer = inquirer.prompt(questions)
+    if answer["option"] == "Attributes":
         pass
+    elif answer["option"] == "Skills":
+        pass
+    elif answer["option"] == "Spells":
+        pass
+    elif answer["option"] == "Items":
+        pass
+    elif answer["option"] == "Level Up":
+        Characters.level_up(character[0])
+        time.sleep(1)
+        display_character(player, Characters.get_by_id(character[0]))
+    elif answer["option"] == "Back":
+        home(player)
 
 
 def character_creation(player):
