@@ -1,4 +1,6 @@
 from .init import CONN, CURSOR
+from .charAttributes import CharAttributes
+from .charSkills import CharSkills
 
 class Characters:
     RACES = ["dragonborn", "dwarf", "elf", "gnome", "half-elf", "half-orc", "halfling", "human", "tiefling"]
@@ -161,6 +163,9 @@ class Characters:
                '''
         CURSOR.execute(sql)
         CONN.commit()
+        CharAttributes.delete_by_char(charID)
+        CharSkills.delete_by_char(charID)
+
 
     @classmethod
     def level_up(cls, charID):

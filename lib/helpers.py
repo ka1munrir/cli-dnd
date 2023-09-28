@@ -2,6 +2,7 @@ import inquirer, os, time, random, math
 from models.players import Players
 from models.characters import Characters
 from models.charAttributes import CharAttributes
+from models.charSkills import CharSkills
 from asciiArt import *
 
 def clear():
@@ -102,7 +103,7 @@ def display_character(player, character):
     if answer["option"] == "Attributes":
         attribute_display(player, character)
     elif answer["option"] == "Skills":
-        pass
+        skill_display(player, character)
     elif answer["option"] == "Spells":
         pass
     elif answer["option"] == "Items":
@@ -117,7 +118,7 @@ def display_character(player, character):
 def attribute_display(player, character):
     clear()
     attr = CharAttributes.get_by_char(character[0])
-    print(f"{character[2]}'s Attributes")
+    print(f"{character[2]}'s Attributes\n")
     print(f"STR: {attr[2]}   {math.floor((attr[2] - 10)/2)}")
     print(f"DEX: {attr[3]}   {math.floor((attr[3] - 10)/2)}")
     print(f"CON: {attr[4]}   {math.floor((attr[4] - 10)/2)}")
@@ -131,8 +132,31 @@ def attribute_display(player, character):
     ]
     answer = inquirer.prompt(questions)
     if answer["option"] == "Back":
-        home(player)
+        display_character(player, character)
 
+def skill_display(player, character):
+    clear()
+    skills = CharSkills.get_by_char(character[0])
+    print(f"{character[2]}'s Skills")
+    print("----------------------------")
+    for skill in skills:
+        value = skill[3]
+        if skill[4] == 1:
+            value += (2 + math.floor((character[5] - 1)/4))
+        if skill[5] == 1:
+            value += 1
+
+        print(f"{skill[2].capitalize() :<20}   {value :>4}")
+        print("----------------------------")
+    # print(skills)
+    questions = [
+        inquirer.List('option',
+                      choices = ["Back"],
+                      ),
+    ]
+    answer = inquirer.prompt(questions)
+    if answer["option"] == "Back":
+        display_character(player, character)
 
 def character_creation(player):
     clear()
@@ -170,7 +194,7 @@ def character_creation(player):
             questions2 = [
                 inquirer.List(
                     f'{attribute}',
-                    message = f"Please rank the priority of {attribute} from 1-6 (high-low):",
+                    message = f"Please rank the priority of {attribute} from 1-6 (high-low)",
                     choices = priority
                 )
             ]
@@ -194,7 +218,7 @@ def character_creation(player):
                 if priority_list[j] == i + 1:
                     attribute_vals[j] = attribute_rolls[0]
                     attribute_rolls.pop(0)
-        print(attribute_vals)
+        # print(attribute_vals)
         Characters(player[0], name , answer["race"], answer["class"], 1, answer["background"], 2, int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
         new_char = Characters.get_by_user_and_name(player[0], name)
         CharAttributes(new_char[0], attribute_vals[0], attribute_vals[1], attribute_vals[2], attribute_vals[3], attribute_vals[4], attribute_vals[5])

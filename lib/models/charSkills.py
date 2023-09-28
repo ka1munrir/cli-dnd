@@ -1,13 +1,14 @@
 from .init import CONN, CURSOR
 
 class CharSkills:
-
+    
     def __init__(self, character_rel, skill, value, proficient, joat):
         self.character_rel = character_rel
         self.skill = skill
         self.value = value
         self.proficient = proficient
         self.joat = joat
+        self.save()
     
     def __str__(self):
         return f"{self.skill.capitalize()}: {self.value} Proficient: {self.proficient} JOAT: {self.joat}"
@@ -37,3 +38,30 @@ class CharSkills:
     def _set_joat(self, joat):
         self._joat = joat
     joat = property(_get_joat, _set_joat)
+
+    def save(self):
+        sql = f'''
+        INSERT INTO charSkills (character_rel, skill, value, proficient, joat)
+        VALUES ({self.character_rel}, "{self.skill}", {self.value}, {self.proficient}, {self.joat})
+        '''
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def get_by_char(cls, charID):
+        sql = f'''
+        SELECT *
+        FROM charSkills
+        WHERE character_rel = {charID}
+        '''
+        skills = CURSOR.execute(sql).fetchall()
+        return (skills)
+    
+    @classmethod
+    def delete_by_char(cls, charID):
+        sql = f'''
+                DELETE FROM charSkills
+                WHERE character_rel = {charID}
+               '''
+        CURSOR.execute(sql)
+        CONN.commit()

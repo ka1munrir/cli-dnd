@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS charSkills (
     character_rel INTEGER,
     skill TEXT CHECK (skill IN ("acrobatics", "animal handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight of hand", "stealth", "survival")),
     value INTEGER,
-    proficient BOOL,
-    joat BOOL,
+    proficient INTEGER,
+    joat INTEGER,
     FOREIGN KEY (character_rel) REFERENCES characters(id)
 );
 

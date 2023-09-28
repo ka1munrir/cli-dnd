@@ -1,8 +1,15 @@
 from .init import CONN, CURSOR
-
+from .charSkills import CharSkills
+import math
 
 class CharAttributes:
     
+    STR_SKILLS = ["athletics"]
+    DEX_SKILLS = ["acrobatics", "sleight of hand", "stealth"]
+    INT_SKILLS = ["arcana", "history", "investigation", "nature", "religion"]
+    WIS_SKILLS = ["animal handling", "insight", "medicine", "perception", "survival"]
+    CHA_SKILLS = ["deception", "intimidation", "performance", "persuasion"]
+
     def __init__(self, character_rel, strength, dexterity, constitution, intelligence, wisdom, charisma):
         self.character_rel = character_rel
         self.strength = strength
@@ -67,6 +74,16 @@ class CharAttributes:
         '''
         CURSOR.execute(sql)
         CONN.commit()
+        for skill in self.STR_SKILLS:
+            CharSkills(self.character_rel, skill, (math.floor((self.strength - 10)/2)), False, False)
+        for skill in self.DEX_SKILLS:
+            CharSkills(self.character_rel, skill, (math.floor((self.dexterity - 10)/2)), False, False)
+        for skill in self.INT_SKILLS:
+            CharSkills(self.character_rel, skill, (math.floor((self.intelligence - 10)/2)), False, False)
+        for skill in self.WIS_SKILLS:
+            CharSkills(self.character_rel, skill, (math.floor((self.wisdom - 10)/2)), False, False)
+        for skill in self.CHA_SKILLS:
+            CharSkills(self.character_rel, skill, (math.floor((self.charisma - 10)/2)), False, False)
 
     @classmethod
     def get_by_char(cls, charID):
@@ -75,5 +92,14 @@ class CharAttributes:
         FROM charAttributes
         WHERE character_rel = {charID}
         '''
-        character = CURSOR.execute(sql).fetchone()
-        return (character)
+        attributes = CURSOR.execute(sql).fetchone()
+        return (attributes)
+    
+    @classmethod
+    def delete_by_char(cls, charID):
+        sql = f'''
+                DELETE FROM charAttributes
+                WHERE character_rel = {charID}
+               '''
+        CURSOR.execute(sql)
+        CONN.commit()
