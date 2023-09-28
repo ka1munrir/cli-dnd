@@ -2,13 +2,13 @@ from .init import CONN, CURSOR
 
 class CharProficiencies:
 
-    def __init__(self, character_rel, name, desc) -> None:
+    def __init__(self, character_rel, proficiencies_rel) -> None:
         self.character_rel = character_rel
-        self.name = name
-        self.desc = desc
+        self.proficiencies_rel = proficiencies_rel
+        self.save()
 
     def __str__(self) -> str:
-        return f"<{self.character_rel} {self.name}: {self.description}>"
+        return f"<{self.character_rel} {self.proficiencies_rel}>"
     
     def _get_character_rel(self):
         return self._character_rel
@@ -18,19 +18,19 @@ class CharProficiencies:
         else:
             raise Exception("character_rel must be an integer")
     character_rel = property(_get_character_rel, _set_character_rel)
-    def _get_name(self):
-        return self._name
-    def _set_name(self, name):
-        if isinstance(name, str):
-            self._name = name
+    def _get_proficiencies_rel(self):
+        return self._proficiencies_rel
+    def _set_proficiencies_rel(self, proficiencies_rel):
+        if isinstance(proficiencies_rel, int):
+            self._proficiencies_rel = proficiencies_rel
         else:
-            raise Exception("name must be a string")
-    name = property(_get_name, _set_name)
-    def _get_desc(self):
-        return self._desc
-    def _set_desc(self, desc):
-        if isinstance(desc, str):
-            self._desc = desc
-        else:
-            raise Exception("desc must be a string")
-    desc = property(_get_desc, _set_desc)
+            raise Exception("proficiencies_rel must be an integer")
+    proficiencies_rel = property(_get_proficiencies_rel, _set_proficiencies_rel)
+
+    def save(self):
+        sql = f'''
+        INSERT INTO charProficiencies (player_rel, proficiencies_rel)
+        VALUES ("{self.character_rel}", "{self.proficiencies_rel}")
+        '''
+        CURSOR.execute(sql)
+        CONN.commit()
