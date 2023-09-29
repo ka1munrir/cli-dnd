@@ -3,6 +3,8 @@ from models.players import Players
 from models.characters import Characters
 from models.charAttributes import CharAttributes
 from models.charSkills import CharSkills
+from models.charProficiencies import CharProficiencies
+from models.dndClasses import *
 from asciiArt import *
 
 def clear():
@@ -96,7 +98,7 @@ def display_character(player, character):
     print(f"Level {character[5]} {character[4].capitalize()}")
     questions = [
         inquirer.List('option',
-                      choices = ["Attributes", "Skills", "Spells", "Items", "Level Up", "Back"],
+                      choices = ["Attributes", "Skills", "Proficiencies", "Spells", "Items", "Level Up", "Back"],
                       ),
     ]
     answer = inquirer.prompt(questions)
@@ -104,6 +106,8 @@ def display_character(player, character):
         attribute_display(player, character)
     elif answer["option"] == "Skills":
         skill_display(player, character)
+    elif answer["option"] == "Proficiencies":
+        prof_display(player, character)
     elif answer["option"] == "Spells":
         pass
     elif answer["option"] == "Items":
@@ -149,6 +153,19 @@ def skill_display(player, character):
         print(f"{skill[2].capitalize() :<20}   {value :>4}")
         print("----------------------------")
     # print(skills)
+    questions = [
+        inquirer.List('option',
+                      choices = ["Back"],
+                      ),
+    ]
+    answer = inquirer.prompt(questions)
+    if answer["option"] == "Back":
+        display_character(player, character)
+
+def prof_display(player, character):
+    clear()
+    prof = CharProficiencies.get_by_char(character[0])
+    print(prof)
     questions = [
         inquirer.List('option',
                       choices = ["Back"],
@@ -219,9 +236,17 @@ def character_creation(player):
                     attribute_vals[j] = attribute_rolls[0]
                     attribute_rolls.pop(0)
         # print(attribute_vals)
-        Characters(player[0], name , answer["race"], answer["class"], 1, answer["background"], 2, int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
-        new_char = Characters.get_by_user_and_name(player[0], name)
-        CharAttributes(new_char[0], attribute_vals[0], attribute_vals[1], attribute_vals[2], attribute_vals[3], attribute_vals[4], attribute_vals[5])
+        if answer["class"] == "barbarian":
+            print("barb")
+            Characters(player[0], name , answer["race"], answer["class"], 1, answer["background"], 2, int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
+            new_char = Characters.get_by_user_and_name(player[0], name)
+            CharAttributes(new_char[0], attribute_vals[0], attribute_vals[1], attribute_vals[2], attribute_vals[3], attribute_vals[4], attribute_vals[5])
+            Barbarian.start_proficencies(new_char[0])
+            Barbarian.skill_proficiencies(new_char[0])
+        else:
+            Characters(player[0], name , answer["race"], answer["class"], 1, answer["background"], 2, int(answer["armor_class"]), int(answer["speed"]), int(answer["hp"]), 0, int(answer["hit_dice"]))
+            new_char = Characters.get_by_user_and_name(player[0], name)
+            CharAttributes(new_char[0], attribute_vals[0], attribute_vals[1], attribute_vals[2], attribute_vals[3], attribute_vals[4], attribute_vals[5])
         print(f'Creating {name}...')
         time.sleep(2)
         home(player)

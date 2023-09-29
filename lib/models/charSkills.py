@@ -65,3 +65,5 @@ class CharSkills:
                '''
         CURSOR.execute(sql)
         CONN.commit()
+
+    

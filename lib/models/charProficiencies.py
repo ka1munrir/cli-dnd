@@ -29,8 +29,18 @@ class CharProficiencies:
 
     def save(self):
         sql = f'''
-        INSERT INTO charProficiencies (player_rel, proficiencies_rel)
+        INSERT INTO charProficiencies (character_rel, proficiencies_rel)
         VALUES ("{self.character_rel}", "{self.proficiencies_rel}")
         '''
         CURSOR.execute(sql)
         CONN.commit()
+
+    @classmethod
+    def get_by_char(cls, charID):
+        sql = f'''
+        SELECT *
+        FROM charProficiencies
+        WHERE character_rel = {charID}
+        '''
+        prof = CURSOR.execute(sql).fetchall()
+        return (prof)

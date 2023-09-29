@@ -11,7 +11,6 @@ class Proficiencies():
 
         res = requests.get(f'{baseLink}/api/proficiencies')
         r = json.loads(res.text)
-        # ptypes = []
         for result in r["results"]:
             a = requests.get(f'{baseLink}{result["url"]}')
             b = json.loads(a.text)
@@ -24,8 +23,15 @@ class Proficiencies():
             INSERT INTO proficiencies (name, type, people)
             VALUES ("{b["name"].replace('"', "'")}", "{b["type"].replace('"', "'")}", "{", ".join(cr).replace('"', "'")}")
             '''
-            # if b["type"] not in ptypes:
-            #     ptypes.append(b["type"])
             CURSOR.execute(sql)
             CONN.commit()
-        # print(ptypes)
+    
+    @classmethod
+    def get_by_type(cls, kind):
+        sql = f'''
+        SELECT *
+        FROM proficiencies
+        WHERE type = {kind}
+        '''
+        proficiencies = CURSOR.execute(sql)
+        return (proficiencies)

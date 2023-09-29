@@ -103,3 +103,5 @@ class CharAttributes:
                '''
         CURSOR.execute(sql)
         CONN.commit()
+    
+    
