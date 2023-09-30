@@ -1,4 +1,4 @@
-from init import CONN, CURSOR
+from .init import CONN, CURSOR
 import requests, json
 
 class Proficiencies():
@@ -26,6 +26,16 @@ class Proficiencies():
             CURSOR.execute(sql)
             CONN.commit()
     
+    @classmethod
+    def get_by_id(cls, profID):
+        sql = f'''
+        SELECT *
+        FROM proficiencies
+        WHERE id = {profID}
+        '''
+        proficiency = CURSOR.execute(sql).fetchone()
+        return (proficiency)
+
     @classmethod
     def get_by_type(cls, kind):
         sql = f'''

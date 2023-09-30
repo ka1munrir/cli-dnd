@@ -4,6 +4,7 @@ from models.characters import Characters
 from models.charAttributes import CharAttributes
 from models.charSkills import CharSkills
 from models.charProficiencies import CharProficiencies
+from models.proficiencies import Proficiencies
 from models.dndClasses import *
 from asciiArt import *
 
@@ -96,6 +97,7 @@ def display_character(player, character):
     print(f"Race: {character[3]}")
     print(f"Background: {character[6]}")
     print(f"Level {character[5]} {character[4].capitalize()}")
+    print(f"HP: {character[11]}")
     questions = [
         inquirer.List('option',
                       choices = ["Attributes", "Skills", "Proficiencies", "Spells", "Items", "Level Up", "Back"],
@@ -165,7 +167,12 @@ def skill_display(player, character):
 def prof_display(player, character):
     clear()
     prof = CharProficiencies.get_by_char(character[0])
-    print(prof)
+    print(f"{character[2]}'s Proficiencies\n")
+    for proficiency in prof:
+        thing = Proficiencies.get_by_id(proficiency[2])
+        print(f"{thing[1]}")
+    print("\n")
+    # print(prof)
     questions = [
         inquirer.List('option',
                       choices = ["Back"],

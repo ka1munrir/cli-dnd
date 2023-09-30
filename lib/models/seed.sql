@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS characters (
     level INTEGER,
     background TEXT,
     proficiency INTEGER,
-    passive_perception INTEGER,
     armor_class INTEGER,
     speed INTEGER,
     hit_points INTEGER,

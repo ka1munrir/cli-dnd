@@ -25,25 +25,24 @@ class Barbarian():
                       choices = ["animal handling", "athletics", "intimidation", "nature", "perception", "survival"],
                       ),
         ]
-        print(charID)
+        # print(charID)
         answer = inquirer.prompt(questions)
-        print(answer["option"])
+        # print(answer["option"])
         if len(answer["option"]) == 2:
-            print(charID)
-            print(answer["option"])
-            # sql = f'''
-            #         UPDATE charSkills
-            #         SET proficient = 1
-            #         WHERE character_rel = ? AND skill = ?;
-            #     '''
-            # try:
-                
-            #     CURSOR.execute(sql, (charID, answer["option"][0]))
-            #     CONN.commit()
-            #     CURSOR.execute(sql, (charID, answer["option"][1]))
-            #     CONN.commit()
-            # except sqlite3.OperationalError as e:
-            #     print(f" error: {e}")
+            # print(charID)
+            # print(answer["option"])
+            sql = f'''
+                    UPDATE charSkills
+                    SET proficient = 1
+                    WHERE character_rel = ? AND skill = ?;
+                '''
+            try:                
+                CURSOR.execute(sql, (charID, answer["option"][0]))
+                CONN.commit()
+                CURSOR.execute(sql, (charID, answer["option"][1]))
+                CONN.commit()
+            except sqlite3.OperationalError as e:
+                print(f" error: {e}")
         elif len(answer["option"]) > 2:
             print("Only Pick 2 Options!")
             time.sleep(2)
